@@ -27,11 +27,13 @@ def main():
     if args.width <= 0 or args.height <= 0:
         print("Error: The width and height of the file must be positive")
         sys.exit(1)
+    if os.path.isdir(args.filename):
+        print("Error: Filename is a directory")
 
     d = DrawCistercian(args.width, args.height)
     # TODO: add stroke size and colors in the options
     d.draw_number(args.number)
-    # TODO: if the file exists, ask
+
     if not os.path.splitext(args.filename)[1]:
         d.save(args.filename + ".svg")
     else:
