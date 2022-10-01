@@ -1,5 +1,11 @@
 from drawSVG import DrawSVG
 
+# TODO: documentation
+# TODO: improve code
+# TODO: add background and stroke color
+# TODO: add stroke width
+# TODO: improve drawing with different dimensions
+
 
 class DrawCistercian:
     def __init__(self, width, height):

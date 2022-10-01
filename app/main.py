@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-
+import os.path
 import sys
 import argparse
 from draw_cistercian import DrawCistercian
@@ -31,8 +31,11 @@ def main():
     d = DrawCistercian(args.width, args.height)
     # TODO: add stroke size and colors in the options
     d.draw_number(args.number)
-    # TODO: make sure that the filename ends with .svg
-    d.save(args.filename)
+    # TODO: if the file exists, ask
+    if not os.path.splitext(args.filename)[1]:
+        d.save(args.filename + ".svg")
+    else:
+        d.save(args.filename)
 
     if args.verbose:
         print(f"Created image {args.filename} with the cistercian number {args.number}")
