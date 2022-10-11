@@ -1,27 +1,33 @@
+from math import floor, log10
+
 from drawSVG import DrawSVG
 
 # TODO: documentation
-# TODO: improve code
-# TODO: improve drawing with different dimensions
 # TODO: correct cut borders
+# TODO: Decorator for add_line to add the color and stroke in each call
+# TODO: INV. way to share already calculated values
 
 
 class DrawCistercian:
     def __init__(self, width, height, background, color, stroke):
-        self.x = width / 2
-        self.y1 = height / 8
-        self.y2 = height - self.y1
-        self.xw = width / 3
-        self.yw = 0.75 * height
+        self._mid_x = width / 2  # Middle point of the x coordinate
+        self._high_y = height / 8  # Higher point of y coordinate
+        self._low_y = height - self._high_y  # Lower point of y coordinate
+        # length of lines
+        self._length = width / 3 if width < height else height / 3
+        # length of the bigger middle line
+        self._big_length = self._low_y - self._high_y
 
         self.color = color
         self.stroke = stroke
 
-        self.draw = DrawSVG(width, height)
-        self.draw.add_background(background)
-        self.draw.add_line(self.x, self.y1, self.x, self.y2, self.color,
-                           self.stroke)
+        self.canvas = DrawSVG(width, height)
+        self.canvas.add_background(background)
+        self.canvas.add_line(self._mid_x, self._high_y,
+                             self._mid_x, self._low_y,
+                             self.color, self.stroke)
 
+        # Dictionary to call each method from the integer
         self.draw_methods = {
             1: self.draw_1,
             2: self.draw_2,
@@ -35,46 +41,49 @@ class DrawCistercian:
         }
 
     def draw_number(self, n):
-        for i in range(4):
-            m = n % 10
-            if m != 0:
-                self.draw_methods[m](i)
+        if n == 0:
+            return None
+
+        for i in range(floor(log10(n)) + 1):
+            r = n % 10
+            if r != 0:
+                self.draw_methods[r](i)
             n = n // 10
 
     def save(self, path):
-        self.draw.write(path)
+        self.canvas.write(path)
 
     def draw_1(self, power=0):
-        y = self.y1 + (0 if power <= 1 else 1) * self.yw
-        x2 = self.x + (1 if power % 2 == 0 else -1) * self.xw
-        self.draw.add_line(self.x, y, x2, y, self.color, self.stroke)
+        y = self._calc_outside_y(power)
+        x2 = self._calc_outside_x(power)
+        self.canvas.add_line(self._mid_x, y, x2, y, self.color, self.stroke)
 
     def draw_2(self, power=0):
-        y = self.y1+self.xw if power <= 1 else self.y2-self.xw
-        x2 = self.x + (1 if power % 2 == 0 else -1) * self.xw
-        self.draw.add_line(self.x, y, x2, y, self.color, self.stroke)
+        y = self._calc_inside_y(power)
+        x2 = self._calc_outside_x(power)
+        self.canvas.add_line(self._mid_x, y, x2, y, self.color, self.stroke)
 
     def draw_3(self, power=0):
-        y1 = self.y1 + (0 if power <= 1 else 1) * self.yw
-        x2 = self.x + (1 if power % 2 == 0 else -1) * self.xw
-        y2 = self.y1+self.xw if power <= 1 else self.y2-self.xw
-        self.draw.add_line(self.x, y1, x2, y2, self.color, self.stroke)
+        y1 = self._calc_outside_y(power)
+        x2 = self._calc_outside_x(power)
+        y2 = self._calc_inside_y(power)
+        self.canvas.add_line(self._mid_x, y1, x2, y2, self.color, self.stroke)
 
     def draw_4(self, power=0):
-        y1 = self.y1+self.xw if power <= 1 else self.y2-self.xw
-        x2 = self.x + (1 if power % 2 == 0 else -1) * self.xw
-        y2 = self.y1 + (0 if power <= 1 else 1) * self.yw
-        self.draw.add_line(self.x, y1, x2, y2, self.color, self.stroke)
+        y1 = self._calc_inside_y(power)
+        x2 = self._calc_outside_x(power)
+        y2 = self._calc_outside_y(power)
+        self.canvas.add_line(self._mid_x, y1, x2, y2, self.color, self.stroke)
 
     def draw_5(self, power=0):
         self.draw_4(power)
         self.draw_1(power)
 
     def draw_6(self, power=0):
-        x = self.x + (1 if power % 2 == 0 else -1) * self.xw
-        y1 = self.y1 + (0 if power <= 1 else 1) * self.yw
-        y2 = self.y1+self.xw if power <= 1 else self.y2-self.xw
-        self.draw.add_line(x, y1, x, y2, self.color, self.stroke)
+        x = self._calc_outside_x(power)
+        y1 = self._calc_outside_y(power)
+        y2 = self._calc_inside_y(power)
+        self.canvas.add_line(x, y1, x, y2, self.color, self.stroke)
 
     def draw_7(self, power=0):
         self.draw_1(power)
@@ -87,3 +96,16 @@ class DrawCistercian:
     def draw_9(self, power=0):
         self.draw_7(power)
         self.draw_2(power)
+
+    def _calc_outside_y(self, power):
+        return self._high_y + ((0 if power <= 1 else 1) * self._big_length)
+
+    def _calc_outside_x(self, power):
+        return self._mid_x + ((1 if power % 2 == 0 else -1) * self._length)
+
+    def _calc_inside_y(self, power):
+        # I don't use ternary operator for readability
+        if power <= 1:
+            return self._high_y + self._length
+        else:
+            return self._low_y - self._length
