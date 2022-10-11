@@ -7,7 +7,7 @@ from draw_cistercian import DrawCistercian
 
 # Configuration of the parser
 parser = argparse.ArgumentParser(
-    description="Creates a svg image of the integer between 0 and 9999",
+    description="Creates a svg image of a Cistercian numeral between 0 and 9999",
     prog="cistercian_cli")
 parser.add_argument("number", type=int, help="Integer number that will be draw")
 parser.add_argument("-f", "--filename", default="out.svg",
@@ -21,7 +21,7 @@ parser.add_argument("--background", default="#FFFFFF",
 parser.add_argument("--color", default="#000000",
                     help="Stroke color in hexadecimal. Default: #000000 (black)")
 parser.add_argument("--stroke", type=int, default=5,
-                    help="Stroke width ni pixels. Default: 5")
+                    help="Stroke width in pixels. Default: 5")
 parser.add_argument("-v", "--verbose", action="store_true",
                     help="Displays more information")
 

@@ -3,6 +3,7 @@ from drawSVG import DrawSVG
 # TODO: documentation
 # TODO: improve code
 # TODO: improve drawing with different dimensions
+# TODO: correct cut borders
 
 
 class DrawCistercian:
