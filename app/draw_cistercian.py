@@ -1,6 +1,5 @@
 from math import floor, log10
-
-from drawSVG import DrawSVG
+from drawSVG.draw import Canvas
 
 # TODO: documentation
 # TODO: correct cut borders
@@ -21,9 +20,9 @@ class DrawCistercian:
         self.color = color
         self.stroke = stroke
 
-        self.canvas = DrawSVG(width, height)
+        self.canvas = Canvas(width, height)
         self.canvas.add_background(background)
-        self.canvas.add_line(self._mid_x, self._high_y,
+        self.canvas.line(self._mid_x, self._high_y,
                              self._mid_x, self._low_y,
                              self.color, self.stroke)
 
@@ -56,24 +55,24 @@ class DrawCistercian:
     def draw_1(self, power=0):
         y = self._calc_outside_y(power)
         x2 = self._calc_outside_x(power)
-        self.canvas.add_line(self._mid_x, y, x2, y, self.color, self.stroke)
+        self.canvas.line(self._mid_x, y, x2, y, self.color, self.stroke)
 
     def draw_2(self, power=0):
         y = self._calc_inside_y(power)
         x2 = self._calc_outside_x(power)
-        self.canvas.add_line(self._mid_x, y, x2, y, self.color, self.stroke)
+        self.canvas.line(self._mid_x, y, x2, y, self.color, self.stroke)
 
     def draw_3(self, power=0):
         y1 = self._calc_outside_y(power)
         x2 = self._calc_outside_x(power)
         y2 = self._calc_inside_y(power)
-        self.canvas.add_line(self._mid_x, y1, x2, y2, self.color, self.stroke)
+        self.canvas.line(self._mid_x, y1, x2, y2, self.color, self.stroke)
 
     def draw_4(self, power=0):
         y1 = self._calc_inside_y(power)
         x2 = self._calc_outside_x(power)
         y2 = self._calc_outside_y(power)
-        self.canvas.add_line(self._mid_x, y1, x2, y2, self.color, self.stroke)
+        self.canvas.line(self._mid_x, y1, x2, y2, self.color, self.stroke)
 
     def draw_5(self, power=0):
         self.draw_4(power)
@@ -83,7 +82,7 @@ class DrawCistercian:
         x = self._calc_outside_x(power)
         y1 = self._calc_outside_y(power)
         y2 = self._calc_inside_y(power)
-        self.canvas.add_line(x, y1, x, y2, self.color, self.stroke)
+        self.canvas.line(x, y1, x, y2, self.color, self.stroke)
 
     def draw_7(self, power=0):
         self.draw_1(power)
